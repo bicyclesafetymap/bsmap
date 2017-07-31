@@ -1,0 +1,39 @@
+{
+  "addressPoints":[
+    {
+      "id": 1,
+      "chara":"Shimada Mayu",
+      "cv":"Yoshioka Mayu"
+    },
+    {
+      "id": 2,
+      "chara":"Hayashida Airi",
+      "cv":"Eino Airi"
+    },
+    {
+      "id": 3,
+      "chara":"Katayama Minami",
+      "cv":"Tanaka Minami"
+    },
+    {
+      "id": 4,
+      "chara":"Nanase Yoshino",
+      "cv":"Aoyama Yoshino"
+    },
+    {
+      "id": 5,
+      "chara":"Hisami Nanami",
+      "cv":"Yamashita Nanami"
+    },
+    {
+      "id": 6,
+      "chara":"Kikuma Kaya",
+      "cv":"Okuno Kaya"
+    },
+    {
+      "id": 7,
+      "chara":"Okamoto Miyu",
+      "cv":"Takagi Miyu"
+    }
+  ]
+}

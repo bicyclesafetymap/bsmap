@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>戦後・復興期／現在 比較地図</title>
+<link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css">
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<link rel="stylesheet" href="./cmn/css/Control.OSMGeocoder.css" />
+
+<style type="text/css">
+    html, body { width: 100%; height: 100%; margin: 0; }
+    #leftMap, #rightMap { width: 100%; height: 100%; margin: 0; }
+    .webix_template{ padding: 0px;}
+.header {
+    padding-left: 10px;
+    color:white;
+    background-color: black;
+}
+.footer {
+    color:white;
+    background-color: black;
+}
+
+</style>
+</head>
+
+<body>
+
+<script src="http://cdn.webix.com/edge/webix.js"></script>
+<script src="/cmn/js/leaflet-src.js"></script>
+<script src="L.Map.Sync.js"></script>
+<script src="./cmn/js/Control.OSMGeocoder.js"></script>
+
+<script type="text/javascript">
+    // 広島
+    var center = [34.3959,132.4520];
+
+
+    webix.ui({
+        rows:[
+            {//header
+                template: "<h1>戦後・復興期／現在 比較地図</h1>", height:64,
+                css:"header"
+            },
+            {
+                cols:[
+                    {id:"leftMap",template:'<div id="leftMap"></div>'},
+//                  {id:"resize", view:"resizer"},
+                    {template:'<div id="rightMap"></div>'},
+                ]
+            },
+            {//footer
+                template:'<a href="http://shimz.me/blog/leaflet-js/4197">©_shimizu</a>', height:20,
+                css:"footer"
+            }
+        ]
+    }).show();
+
+
+
+    var ort_USA10 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/ort_USA10/{z}/{x}/{y}.png',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var ort = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var std = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var gazo1 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/gazo1/{z}/{x}/{y}.jpg',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var gazo2 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/gazo2/{z}/{x}/{y}.jpg',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var gazo3 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/gazo3/{z}/{x}/{y}.jpg',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var gazo4 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/gazo4/{z}/{x}/{y}.jpg',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+    var ort_old10 = L.tileLayer(
+        'http://cyberjapandata.gsi.go.jp/xyz/ort_old10/{z}/{x}/{y}.png',
+        {
+            attribution: "<a href='http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html' target='_blank'>国土地理院</a>",
+            maxZoom: 17
+        }
+    );
+
+
+    var leftMap = L.map('leftMap', {
+        layers: [ort_USA10],
+        center: center,
+        zoom: 15,
+        zoomControl: false
+    });
+
+    leftMap.attributionControl.setPrefix('');
+
+    rightMap = L.map('rightMap', {
+        layers: [ort],
+        center: center,
+        zoom: 15
+    });
+
+    L.control.layers({
+        "2007年～":ort ,
+        "1988～1990年": gazo4,
+        "1984～1986年": gazo3,
+        "1979～1983年": gazo2 ,
+        "1974～1978年": gazo1,
+        "1961～1964年":ort_old10,
+        }, {"標準地図":std}).addTo(rightMap);
+
+
+    leftMap.sync(rightMap);
+    rightMap.sync(leftMap);
+
+    /*
+    $$("leftMap").attachEvent("onViewResize", function(){
+        leftMap._onResize();
+        rightMap._onResize();
+        console.log("resize")
+    })
+    */
+               // /* ========== 住所から座標を検索 ========== */
+            var osmGeocoder = new L.Control.OSMGeocoder({
+                collapsed: false,
+                position: 'bottomright',
+                text: '検索',
+            });
+            rightMap.addControl(osmGeocoder);
+</script>
+
+</body>
+</html>

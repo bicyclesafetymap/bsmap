@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Custom marker icons</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+<script src="/cmn/js/leaflet.markercluster-src.js"></script>
+</head>
+<body>
+<div id='map'></div>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1Ijoic2h1dWhleWhleSIsImEiOiJjaWdocWQ4ODA4NWIxdjZtMjloc2gyMjBqIn0.03xmneq730QOe4PC0jrU0A';
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([40, -74.50], 8);
+
+var myLayer = L.mapbox.featureLayer().addTo(map);
+
+
+var geoJson = [{
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-75.00, 40]
+    },
+    "properties": {
+        "title": "Small astronaut",
+        "icon": {
+            "iconUrl": "https://www.mapbox.com/mapbox.js/assets/images/astronaut1.png",
+            "iconSize": [50, 50], // size of the icon
+            "iconAnchor": [25, 25], // point of the icon which will correspond to marker's location
+            "popupAnchor": [0, -25], // point from which the popup should open relative to the iconAnchor
+            "className": "dot"
+        }
+    }
+}, {
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-74.00, 40]
+    },
+    "properties": {
+        "title": "Big astronaut",
+        "icon": {
+            "iconUrl": "https://www.mapbox.com/mapbox.js/assets/images/astronaut2.png",
+            "iconSize": [100, 100],
+            "iconAnchor": [50, 50],
+            "popupAnchor": [0, -55],
+            "className": "dot"
+        }
+    }
+}];
+
+
+// Set a custom icon on each marker based on feature properties.
+myLayer.on('layeradd', function(e) {
+    var marker = e.layer,
+        feature = marker.feature;
+
+    marker.setIcon(L.icon(feature.properties.icon));
+});
+
+// Add features to the map.
+myLayer.setGeoJSON(geoJson);
+</script>
+</body>
+</html>

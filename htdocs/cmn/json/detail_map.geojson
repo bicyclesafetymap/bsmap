@@ -1,0 +1,23 @@
+{
+   "type": "FeatureCollection",
+   "features": [
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ 139.2209316,35.82109227 ]
+    },
+    "properties": {
+    "time":"2014.11.12.10:00",
+    "title":"自動車と出会い頭衝突",
+    "area":"草津市野路東",
+    "tag":"坂、見通し、暗い、事故多発",
+    "detail":"detail.php",
+    "thumb":"pic_01.jpg",
+    "icon": {
+            "iconUrl": "pin_01.svg"
+        }
+    }
+  }
+  ]
+}

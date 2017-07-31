@@ -1,0 +1,28 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+    {
+        "type":"Feature",
+        "geometry":{"type":"Point",
+        "coordinates":[139.74542422,35.65863174]},
+        "properties":{
+            "title":"東京タワー (Tokyo Tower)",
+            "pin":"pin_01.svg",
+            "date":"2015.12.04",
+            "detail":"detail.php",
+            "thumb":"pic_01.jpg",
+        }
+    },{
+        "type":"Feature",
+        "geometry":{"type":"Point",
+        "coordinates":[139.729260969094,35.6604319722521]},
+        "properties":{
+            "title":"東京タワー (Tokyo Tower)",
+            "pin":"pin_01.svg",
+            "date":"2015.12.04",
+            "detail":"detail.php",
+            "thumb":"pic_01.jpg",
+        }
+    }
+    ]
+}

@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="content-language" content="ja">
+<title>2013年度の「全国の自動車交通騒音の測定結果」 25km HEX</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="./cmn/css/leaflet.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.27.1/es6-shim.min.js"></script>
+<script src="./cmn/js/fetch.js"></script>
+
+<script src="./cmn/js/leaflet-src.js"></script>
+
+<script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+}
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+
+</style>
+</head>
+<body>
+    <div id="map"></div>
+<script>
+
+// jsonデータの読み込み。fetchを使っているが jQuery.ajaxでもOK
+// https://github.com/github/fetch
+// https://parkmap-h.appspot.com/spaces
+fetch('./cmn/json/hex25.geojson')
+    .then(function(response) {
+        return response.json()
+    }).then(function(json) {
+        draw(json)
+    });
+
+function draw(json){
+    var hex = {};
+    hex.type =  "FeatureCollection";
+    hex.features = json.features.filter(function(feature){
+        return feature.properties.pt_median !== null; //値の存在しないセルは削除する
+    });
+
+    //値の自然分類(Jenks）を行う
+    var breaks = turf.jenks(hex, 'pt_median', 5);
+
+
+    map = L.map('map').setView([36.3265281, 139.00918460000003], 6);
+
+    L.tileLayer(
+        'http://tile.stamen.com/toner/{z}/{x}/{y}.png',
+        {
+            attribution: "<a target='_blank' href='http://maps.stamen.com/#toner' target='_blank'>stamen</a> data by <a target='_blank' href='http://tenbou.nies.go.jp/gis/'>環境GIS</a>"
+        }
+    ).addTo(map);
+
+    //ヘックスクリック時にポップアップを表示
+    var onEachFeature = function(feature, layer) {
+        var popupContent = "Leq昼間:";
+        if (feature.properties && feature.properties.pt_median) {
+            popupContent += feature.properties.pt_median+"(dB)";
+        }
+        layer.bindPopup(popupContent);
+    }
+
+
+    //ヘックスを地図に追加
+    var hexLayer = L.geoJson(hex, { onEachFeature: onEachFeature }).addTo(map);
+
+
+    //各セルのスタイルを設定
+    hex.features.forEach(setStyle);
+
+    //スタイルを反映
+    hexLayer.eachLayer(function(l) {
+        l.setStyle(l.feature.properties.withMedian);
+    });
+
+
+    function setStyle(cell){
+        cell.properties.withMedian = {};
+
+        var pt_median = cell.properties.pt_median;
+
+        var _withMedian = {};
+        _withMedian.color = '#f00';
+        _withMedian.weight = 1;
+        _withMedian.fillOpacity = 0;
+        if(pt_median >= breaks[0]) {
+            _withMedian.fillOpacity = 0;
+        } if(pt_median >= breaks[1]) {
+            _withMedian.fillOpacity = 0;
+        } if(pt_median >= breaks[2]) {
+            _withMedian.fillOpacity = 0.1;
+        } if(pt_median >= breaks[3]) {
+            _withMedian.fillOpacity = 0.4;
+        } if(pt_median >= breaks[4]) {
+            _withMedian.fillOpacity = 0.8;
+        }
+        cell.properties.withMedian = _withMedian;
+    }
+}
+
+</script>
+</body>
+</html>

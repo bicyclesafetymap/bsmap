@@ -1,0 +1,74 @@
+//
+//  File Name   : _menubtn.scss
+//  Description : Menubtn
+//
+.gnavMenuBtn {
+  cursor: pointer;
+  background: $sub-color;
+  width: 55px;
+  height: 55px;
+  position: absolute;
+  z-index: 200;
+  right: 0;
+  top: 0;
+  .inner {
+    width: 30px;
+    height: 51px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+  }
+  span {
+    transition: width 0.2s, right 0.2s, left 0.2s;
+    width: 100%;
+    height: 4px;
+    display: block;
+    background: #fff;
+    position: absolute;
+    top: 50%;
+  }
+  .top {
+    transform: translateY(-10px);
+    left: 0;
+    // left: 7px;
+  }
+  .middle {
+    transform: translateY(0px);
+    position: relative;
+    background: none;
+    &:before, &:after {
+      content: "";
+      transition: all 0.2s;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      left: 0;
+      background: #fff;
+      transform: rotate(0deg);
+    }
+  }
+  .bottom {
+    transform: translateY(10px);
+    right: 0;
+  }
+}
+
+.gnavMenuBtn.is-open {
+  .top {
+    width: 0px;
+  }
+  .middle {
+    &:before {
+      transform: rotate(135deg);
+    }
+    &:after {
+      transform: rotate(45deg);
+    }
+  }
+  .bottom {
+    right: -100%;
+    width: 0px;
+  }
+}
+

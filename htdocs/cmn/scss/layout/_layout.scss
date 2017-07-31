@@ -1,0 +1,68 @@
+//
+//  File Name   : _layout.scss
+//  Description : Layout
+//
+
+/*
+ Container
+----------------------------------------------------------- */
+
+.largeContainer{
+  width: 640px;
+  height: auto;
+  margin: 0 auto;
+  font-size: 130%;
+  line-height: $default-line-height;
+  position: relative;
+  overflow: hidden;
+}
+
+@include sp{
+  .largeContainer{
+    width: auto;
+    height: auto;
+    min-height: 440px;
+    font-size: 1.5rem;
+  }
+}
+
+
+.container {
+  width: 1000px;
+  margin:0 auto;
+  position: relative;
+  @include clearfix;
+}
+
+@include sp{
+  .container {
+    width: auto;
+    margin:0 auto;
+    position: relative;
+    font-size: 1.3rem;
+    @include clearfix;
+    line-height: 1.4;
+  }
+}
+
+.footerCopy{
+  background: #FAFAFA;
+  border-top: 1px solid $default-boder-color;
+  padding: 10px 0 10px 10px;
+  color: #BABABA;
+  font-size: 1.1rem;
+}
+
+.staticHeaderContainer{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 640px;
+  margin: auto;
+  z-index: 100;
+  background: rgba(#FAFAFA,0.8);
+  @include sp{
+    width: auto;
+  }
+}

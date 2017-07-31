@@ -1,0 +1,89 @@
+
+.areaContainer{
+  position: absolute;
+  width: 100%;
+  top: 0;
+  // right: 0;
+  right: -130%;
+  z-index: 1000;
+  transition: all .3s ;
+  transition-timing-function: cubic-bezier(.52,.47,0,.98);
+
+  .layerBg{
+    top: 0;
+    right: 0;
+    background: rgba($sub-theme-color-blue,0.7);
+    transition-duration: .1s;
+    transition-timing-function: cubic-bezier(.52,.47,0,.98);
+  }
+  &_main{
+    background: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 78%;
+    z-index: 190;
+    padding-bottom: 30px;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.52,.47,0,.98);
+  }
+  &.is-open{
+    right: 0;
+  }
+  &_inner{
+    overflow-y: auto;
+    width: 100%;
+    padding-bottom: 50px;
+  }
+  &_over{
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  &_close{
+    background: #fff;
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    z-index: 800;
+    top: 5px;
+    left: -55px;
+    margin: auto 0;
+    border-radius: 5px 0 0 5px;
+    &::after{
+      display: block;
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 25px;
+      margin: auto;
+      width: 16px;
+      height: 16px;
+      border-right: 2px solid $sub-theme-color-blue;
+      border-bottom: 2px solid $sub-theme-color-blue;
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.areaContainerList{
+  dt{
+    padding: 10px 0 10px 10px;
+    color: $sub-theme-color-blue;
+    font-size: 2rem;
+  }
+  dd{
+    li{
+      border-top: 1px solid $default-boder-color;
+      &:last-child{
+        border-bottom: 1px solid $default-boder-color;
+      }
+    }
+    a{
+      color: $default-font-color;
+      display: block;
+      padding: 10px 0 10px 20px;
+    }
+  }
+
+}

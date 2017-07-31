@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>モザイクデモ</title>
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<style type="text/css">
+    * {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body {
+  background: #dddddd;
+}
+input[type="button"] {
+    padding: 10px 40px;
+    font-size: 20px;
+    background-color: #000;
+    color: #fff;
+    border-style: none;
+    cursor: pointer;
+    margin: 20px;
+}
+#cv1{
+    cursor: crosshair;
+}
+</style>
+</head>
+
+<script>
+var drawFlag = false;
+var canvas;
+var base;
+var size = 20;
+var imagePath = './ikeay.jpg';
+var draw = function(e){
+    var offset = $(canvas).offset();
+    console.log(offset);
+    var x = e.clientX - offset.left;
+    var y = e.clientY - offset.top;
+    var context = canvas.getContext("2d");
+    if (!drawFlag) return;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    x = x - (x % size);
+    y = y - (y % size);
+    var data = context.getImageData(x,y,size,size).data;
+    var dataLength = data.length;
+    for(var pixelIndex = 0; pixelIndex < dataLength; pixelIndex += 4) {
+        r += data[pixelIndex];
+        g += data[pixelIndex + 1];
+        b += data[pixelIndex + 2];
+    }
+    var pixelCount = dataLength / 4;
+
+    r = Math.floor(r / pixelCount);
+    g = Math.floor(g / pixelCount);
+    b = Math.floor(b / pixelCount);
+    context.fillStyle = "rgba(" + r + "," + g + "," + b + ",1)";
+    context.fillRect(x,y,size,size);
+};
+$(function(){
+    canvas = $('canvas')[0];
+    if (!canvas || !canvas.getContext) {
+        return false;
+    }
+    var ctx = canvas.getContext('2d');
+     // Imageオブジェクトを生成
+    var img = new Image();
+    img.src = imagePath + "?" + new Date().getTime();
+     // 画像が読み込まれるのを待ってから処理を続行
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+    };
+    base = $('#imgCanvas');
+    $(document).on('mousemove', function(e){
+        draw(e);
+    });
+    $(document).on('mousedown', function(){
+        drawFlag = true;
+    });
+    $(document).on('mouseup', function(){
+        drawFlag = false;
+    });
+});
+
+// 画像に変換
+function chgImg(){
+  var cvs = document.getElementById("cv1");
+  var png = cvs.toDataURL();
+  document.getElementById("newImg").src = png;
+}
+</script>
+
+<body>
+
+<div id="imgCanvas">
+    <canvas id="cv1" width="428" height="428"></canvas>
+</div>
+
+<form>
+    <input type="button" value="画像に変換" onclick="chgImg()">
+</form>
+
+<div>
+    <img id="newImg">
+</div>
+
+</body>
+</html>

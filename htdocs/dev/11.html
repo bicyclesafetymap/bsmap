@@ -1,0 +1,102 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Leaflet Esri Autocomplete Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <link rel="stylesheet" href="http://rowanwinsemius.id.au/demo/css/uikit.almost-flat.min.css">
+    <link rel="stylesheet" href="http://rowanwinsemius.id.au/demo/css/style.css" />
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+  <script src="https://rawgit.com/LeaVerou/awesomplete/gh-pages/awesomplete.min.js"></script>
+
+
+
+</head>
+
+<body>
+    <div class="featureStrip"></div>
+   <div class="uk-grid uk-margin-remove" id="main">
+
+    <div class="overlay uk-width-1-5">
+            <h2 class="uk-margin-large-top">Search data</h2>
+        <div>
+            <p>Search for your neighbourhood</p>
+            <input type="text" id="autocomplete">
+            <br><p class="tip">Try Ashcreek or Reed</p><br><br>
+            <div>
+                <button id="SearchButton" class="uk-button" onClick="showRegion()">Show Region</button>
+            </div>
+
+        </div>
+
+        <img src="http://rowanwinsemius.id.au/wp-content/uploads/2014/10/R548QOW.png" class="uk-responsive-width uk-margin-large-top">
+    </div>
+
+    <div id="map" class="uk-width-4-5"></div>
+</div>
+
+    <script src="http://rowanwinsemius.id.au/demo/js/esri-leaflet.js"></script>
+
+
+
+    <script>
+
+    var validNeighbourhoods = [];
+
+    $.getJSON("https://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Neighborhoods_pdx/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Meter&outFields=NAME&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&f=pjson&token=", function( data )
+          {
+          $.each( data.features, function(index,value) {
+            validNeighbourhoods.push(value.attributes.NAME);
+          });
+    });
+
+    var input = document.getElementById("autocomplete");
+    var awesomplete = new Awesomplete(input, {list: validNeighbourhoods});
+
+    map = L.map('map').setView([45.526, -122.667], 11);
+
+           var aaa = L.tileLayer('http://tile.openstreetmap.jp/{z}/{x}/{y}.png', {
+                attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a>',
+                maxZoom : 19,
+                minZoom: 3
+            }).addTo(map);
+
+
+    var neighbourhood = 'https://services.arcgis.com/rOo16HdIMeOBI4Mb/ArcGIS/rest/services/Neighborhoods_pdx/FeatureServer/0';
+
+    var query = "NAME='LINNTON'";
+
+
+    var myLayer = L.esri.featureLayer(neighbourhood,{
+        where: query,
+    }).addTo(map);
+
+    var newLayer = '';
+
+    function showRegion(){
+    map.removeLayer(myLayer);
+    map.removeLayer(newLayer);
+
+    query = $("#autocomplete").val();
+       newQuery = "NAME='"+query+"'"
+       newLayer = L.esri.featureLayer(neighbourhood,{
+        where: newQuery
+    })
+        map.addLayer(newLayer);
+    }
+
+
+
+</script>
+
+
+</body>
+
+</html>

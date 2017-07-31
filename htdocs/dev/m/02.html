@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" /><title>2015-01-08 1st - js do it</title>
+<meta name="Description" content="jsdo.it - share JavaScript, HTML5 and CSS - " />
+<meta name="Keywords"  content="JavaScript,HTML5,CSS" />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<style type="text/css">body { margin: 0; }
+</style></head>
+<body>
+
+<script type="text/javascript">
+"use strict"
+
+// スワイプによるスクロールを禁止させる
+document.body.addEventListener('touchstart', function (event) {
+  event.preventDefault();
+});
+// キャンバス作成
+var scale = window.devicePixelRatio;
+var canvas = document.createElement('canvas');
+canvas.style.width = window.innerWidth + 'px';
+canvas.style.height = window.innerHeight + 'px';
+canvas.width = window.innerWidth * scale;
+canvas.height = window.innerHeight * scale;
+// キャンバスを配置するdiv要素を作成し、bodyに追加
+var container = document.createElement('div');
+container.style.width = window.innerWidth + 'px';
+container.style.height = window.innerHeight + 'px';
+container.style.overflow = 'hidden';
+container.appendChild(canvas);
+document.body.appendChild(container);
+$(container).attr('id', 'wrapper');
+
+var drawFlag = false;
+var canvas;
+var base;
+var size = 20;
+var imagePath = './ikeay.jpg';
+var draw = function(e){
+    var offset = $(canvas).offset();
+    console.log(offset);
+    var x = e.clientX - offset.left;
+    var y = e.clientY - offset.top;
+    var context = canvas.getContext("2d");
+    if (!drawFlag) return;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    x = x - (x % size);
+    y = y - (y % size);
+    var data = context.getImageData(x,y,size,size).data;
+    var dataLength = data.length;
+    for(var pixelIndex = 0; pixelIndex < dataLength; pixelIndex += 4) {
+        r += data[pixelIndex];
+        g += data[pixelIndex + 1];
+        b += data[pixelIndex + 2];
+    }
+    var pixelCount = dataLength / 4;
+
+    r = Math.floor(r / pixelCount);
+    g = Math.floor(g / pixelCount);
+    b = Math.floor(b / pixelCount);
+    context.fillStyle = "rgba(" + r + "," + g + "," + b + ",1)";
+    context.fillRect(x,y,size,size);
+};
+$(function(){
+    canvas = $('canvas')[0];
+    if (!canvas || !canvas.getContext) {
+        return false;
+    }
+    var ctx = canvas.getContext('2d');
+    /* Imageオブジェクトを生成 */
+    var img = new Image();
+    img.src = imagePath + "?" + new Date().getTime();
+    /* 画像が読み込まれるのを待ってから処理を続行 */
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+    };
+    base = $('#wrapper');
+    $(document).on('mousemove', function(e){
+        draw(e);
+    });
+    $(document).on('mousedown', function(){
+        drawFlag = true;
+    });
+    $(document).on('mouseup', function(){
+        drawFlag = false;
+    });
+});
+
+</script>
+</body>
+</html>

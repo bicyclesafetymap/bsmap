@@ -1,0 +1,15 @@
+
+.conceptPic{
+  img{
+    width: 100%;
+    height: auto;
+  }
+}
+
+.conceptText{
+  padding: 10px 15px 20px;
+  font-size: 110%;
+  @include sp{
+    font-size: 1.6rem;
+  }
+}

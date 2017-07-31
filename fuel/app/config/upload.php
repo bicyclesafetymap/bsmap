@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'auto_process'   => false,
+    'max_size'       => 5242880,
+    'ext_whitelist'  => ['png', 'jpeg', 'jpg', 'gif', 'ico', 'svg'],
+    'ext_blacklist'  => [],
+    'type_whitelist' => [],
+    'type_blacklist' => [],
+    'mime_whitelist' => [],
+    'mime_blacklist' => [],
+    'prefix'         => '',
+    'suffix'         => '',
+    'extension'      => '',
+    'path'           => DOCROOT.'upload',
+    'create_path'    => true,
+    'path_chmod'     => 0777,
+    'file_chmod'     => 0666,
+    'auto_rename'    => true,
+    'overwrite'      => true,
+    'randomize'      => true,
+    'normalize'      => true,
+    'change_case'    => 'lower',
+    'max_length'     => 255,
+];

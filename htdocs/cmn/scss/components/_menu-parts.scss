@@ -1,0 +1,104 @@
+//
+//  File Name   : _layout.scss
+//  Description : Layout
+//
+
+.gnavMenu{
+  position: absolute;
+  width: 100%;
+  height: auto;
+  right: -130%;
+  z-index: 1500;
+  transition: all .25s ;
+  transition-timing-function: cubic-bezier(.52,.47,0,.98);
+  .layerBg{
+    background: rgba(#339F3B,0.7);
+    top: 0;
+    right: 0;
+  }
+  &.is-open{
+    right: 0;
+  }
+  &_copy{
+    border-top: 1px solid $default-boder-color;
+    font-size: 1rem;
+    color: #B8B8B8;
+    padding: 10px 0 10px 5px;
+  }
+}
+
+
+.layerBg{
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: block;
+}
+
+.gnavMenuContainer{
+  background: #fff;
+  position: absolute;
+  top: 0;
+  width: 78%;
+  z-index: 150;
+  right: 0;
+  &_over{
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  &_inner{
+    overflow-y: auto;
+    width: 100%;
+    padding-bottom: 50px;
+  }
+  &_icon{
+    text-align: center;
+    img{
+      width: 70%;
+      max-width: 250px;
+    }
+  }
+  &_list{
+    li{
+      border-top: 1px solid #ddd;
+    }
+    a{
+      font-size: 18px;
+      display: block;
+      padding: 15px 10px;
+    }
+    img{
+      width: 17px;
+      height: auto;
+      display: inline-block;
+      margin-right: 7px;
+      vertical-align: -2px;
+    }
+  }
+  &_close{
+    background: #fff;
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    z-index: 600;
+    top: 5px;
+    left: -55px;
+    margin: auto 0;
+    border-radius: 5px 0 0 5px;
+    &::after{
+      display: block;
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 25px;
+      margin: auto;
+      width: 16px;
+      height: 16px;
+      border-right: 2px solid #439C13;
+      border-bottom: 2px solid #439C13;
+      transform: rotate(-45deg);
+    }
+  }
+}

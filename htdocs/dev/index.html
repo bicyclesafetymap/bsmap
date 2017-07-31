@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang='ja'>
+    <head>
+        <meta charset='utf-8' />
+        <title>みんなでつくる自転車セイフティマップ Demo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- css -->
+        <link rel="stylesheet" href="./cmn/css/base.css" />
+        <link rel="stylesheet" href="./cmn/css/leaflet.css" />
+        <link rel="stylesheet" href="./cmn/css/MarkerCluster.css" />
+        <link rel="stylesheet" href="./cmn/css/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="./cmn/css/screen.css">
+        <link rel="stylesheet" href="./cmn/css/Control.OSMGeocoder.css" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="./cmn/css/L.Control.Locate.css" />
+        <link rel="stylesheet" href="./cmn/css/L.Control.Zoomslider.css" />
+        <link rel="stylesheet" href="./cmn/css/leaflet.groupedlayercontrol.css" />
+        <link rel="stylesheet" href="./cmn/css/leaflet-list-markers.css" />
+        <!-- jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <!-- JavaScript -->
+        <script src="./cmn/js/leaflet-src.js"></script>
+        <script src="https://maps.google.com/maps/api/js?v=3&language=ja"></script>
+        <script src="./cmn/js/gmap.js"></script>
+        <script src="./cmn/js/Bing.js"></script>
+        <script src="./cmn/js/leaflet.markercluster-src.js"></script>
+        <script src="./cmn/js/Control.OSMGeocoder.js"></script>
+        <script src="./cmn/js/L.Control.Locate.js"></script>
+        <script src="./cmn/js/base.js"></script>
+        <script src="./cmn/js/fetch.js"></script>
+        <script src="./cmn/js/L.Control.Zoomslider.js"></script>
+        <script src="./cmn/js/leaflet.groupedlayercontrol.js"></script>
+        <script src="./cmn/js/leaflet-list-markers.js"></script>
+        <script src="./cmn/js/leaflet-hash.js"></script>
+<style type="text/css">
+    * { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:60%; }
+</style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <ul id='makerList' class='ui-coordinates'></ul>
+
+<div class="layerSwitch">
+
+<label><input class="layerSwitchRadio" type="radio" value="mapbox" name="leaflet-base-layers" checked="checked"><span> Mapbox</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="osm" name="leaflet-base-layers"><span> OpenStreetMap</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="ggl" name="leaflet-base-layers"><span> Google Map Satellite</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="ggl2" name="leaflet-base-layers"><span> Google Map Roadmap</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="ggl3" name="leaflet-base-layers"><span> Google Map Terrain</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="ggl4" name="leaflet-base-layers"><span> Google Map Hybrid</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="cjstd" name="leaflet-base-layers"><span> 地理院地図 標準</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="cjort" name="leaflet-base-layers"><span> 地理院地図 オルソ画像</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="cjblk" name="leaflet-base-layers"><span> 地理院地図 白地図</span></label><br>
+
+<label><input class="layerSwitchRadio" type="radio" value="bing" name="leaflet-base-layers"><span> Bing</span></label><br>
+
+<input class="layerSwitchRadio" type="radio" value="watercolor" name="leaflet-base-layers"><span> WaterColor</span></label><label><br>
+<input class="layerSwitchRadio" type="radio" value="toner" name="leaflet-base-layers"><span> Toner</span></label><br><br>
+
+<hr><br>
+        <label class="checkbox">
+            <input class="layerSwitchCheckbox" type="checkbox" value="markers" checked><span class="outer"></span> 事故情報１
+        </label><br>
+        <label class="checkbox">
+            <input class="layerSwitchCheckbox" type="checkbox" value="markers2" checked><span class="outer"></span> 事故情報2
+        </label><br>
+
+<button class="locatButton">現在地に移動</button><br>
+<a href="./">ページ再読み込み</a>
+
+    </div>
+
+<script>
+    // Map初期設定
+    var homeLatLng = [35.7465, 139.4673];
+    var homeZoomLev = 10;
+</script>
+
+<script>
+
+            var map = L.map('map', {
+                center: homeLatLng,
+                zoom: homeZoomLev,
+                zoomControl: true
+            });
+
+            // ハッシュに対応
+            var hash = L.hash(map);
+
+            var token = 'sk.eyJ1Ijoic2h1dWhleWhleSIsImEiOiJjaWhpZ29kemMwNTJhdHJqN2txeGY2YzM0In0.7503tAl6O-E4taztW8edsA';
+            var mapboxUrl = 'http://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=' + token;
+            var mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
+            var mapbox = new L.TileLayer(mapboxUrl, {
+              attribution: mapboxAttrib
+            }).addTo(map);
+
+            // OSM地図レイヤ
+            // var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            //     attribution : '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            //     maxZoom : 19,
+            //     minZoom: 3
+            // });
+
+            // //オープンストリートマップ
+            var osm = L.tileLayer('http://tile.openstreetmap.jp/{z}/{x}/{y}.png', {
+                attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a>',
+                maxZoom : 19,
+                minZoom: 3
+            });
+
+
+            // 地理院地図の標準地図レイヤ
+            var cjstd = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 18,
+                minZoom: 3
+            });
+
+            // 地理院地図のオルソ画像レイヤ
+            var cjort = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 18,
+                minZoom : 6
+            });
+
+            // 地理院地図の白地図レイヤ
+            var cjblk = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 14,
+                minZoom: 6
+            });
+
+            // Bing地図レイヤ
+            // for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
+            var imagerySet = "Road"; // Aerial | AerialWithLabels | Road
+            var bing = new L.BingLayer("ApZiEmbLrlk87uvEpqaF33l3gh4O54vvA8WfVUa7kgUvplMh_aFKJGWFoPKCRoIQ", {
+                type: imagerySet,
+                maxZoom : 19,
+                minZoom: 3
+            });
+
+            // Stamen.Watercolor
+            var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+                attribution : '&copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a> Contributors & <a target="_blank" href="http://stamen.com">Stamen Design</a>',
+                maxZoom : 16,
+                minZoom: 3
+            });
+
+            // Stamen.Toner
+            var toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a> Contributors & <a target="_blank" href="http://stamen.com">Stamen Design</a>',
+                maxZoom : 20,
+                minZoom: 3
+            });
+
+            // Google Map Satellite
+            var ggl  = new L.Google('SATELLITE', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+
+//Google Maps のスタイル指定
+var styles = [{"elementType":"geometry","stylers":[{"hue":"#ff4400"},{"saturation":-100},{"lightness":-4},{"gamma":0.72}]},{"featureType":"road","elementType":"labels.icon"},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"hue":"#0077ff"},{"gamma":3.1}]},{"featureType":"water","stylers":[{"hue":"#00ccff"},{"gamma":0.44},{"saturation":-33}]},{"featureType":"poi.park","stylers":[{"hue":"#44ff00"},{"saturation":-23}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"hue":"#007fff"},{"gamma":0.77},{"saturation":65},{"lightness":99}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"gamma":0.11},{"weight":5.6},{"saturation":99},{"hue":"#0091ff"},{"lightness":-86}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"lightness":-48},{"hue":"#ff5e00"},{"gamma":1.2},{"saturation":-23}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"saturation":-64},{"hue":"#ff9100"},{"lightness":16},{"gamma":0.47},{"weight":2.7}]}];
+
+            // Google Map Roadmap
+            var ggl2 = new L.Google('ROADMAP', {
+                maxZoom : 21,
+                mapOptions: {styles: styles},
+                minZoom: 3
+            });
+            // Google Map Terrain
+            var ggl3 = new L.Google('TERRAIN', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+            // Google Map Hybrid
+            var ggl4 = new L.Google('HYBRID', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+
+
+
+
+            /**********************************************************
+             * OpenWeatherMap
+             **********************************************************/
+            var pf = new  L.tileLayer(
+                'http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png',
+                {
+                    attribution: '<a target="_blank" href="http://openweathermap.org/">降水予測<a>',
+                    opacity:0.8
+                });
+
+            var cf = new  L.tileLayer(
+                'http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png',
+                {
+                    attribution: '<a target="_blank" href="http://openweathermap.org/">雲の予測</a>',
+                    opacity:0.8
+                });
+
+            var pcf = new  L.tileLayer(
+                'http://{s}.tile.openweathermap.org/map/pressure_cntr/{z}/{x}/{y}.png',
+                {
+                    attribution: '<a target="_blank" href="http://openweathermap.org/">気圧図</a>',
+                    opacity:1
+                });
+            // OWN end
+
+
+        var markers = L.markerClusterGroup();
+        var markers2 = L.markerClusterGroup();
+
+
+        /* ========== Fetch Version (https://github.com/github/fetch) ========== */
+        fetch('./cmn/json/maker-388.json')
+          .then(function(response) {
+            return response.json()
+          }).then(function(json) {
+            // console.log('parsed json', json)
+            // console.log(json.addressPoints[1].id)
+
+                $.each(json.addressPoints, function(i){
+                // for(var i = 0; i < json.addressPoints.length; i++) {
+                    var d = json.addressPoints[i];
+
+                    var marker = L.marker(new L.LatLng(d.lat, d.lng), { title: d.id, test: d.text  });
+                    marker.bindPopup("<strong>" + d.title + "</strong>" + "<br>" + d.text + "<br>" + "ID = " + d.id);
+                    markers.addLayer(marker);
+                });
+                // };
+
+          }).catch(function(ex) {
+                console.log('parsing failed', ex)
+          });
+
+        map.addLayer(markers);
+        map.addLayer(markers2);
+
+
+        // Geojson Version
+        fetch('./cmn/json/map.geojson')
+            .then(function(response) {
+                return response.json()
+            }).then(function(json) {
+                    var geoMarker = L.geoJson(json, {
+                        onEachFeature: onEachFeature
+                });
+                    markers2.addLayer(geoMarker);
+            }).catch(function(ex) {
+                console.log('parsing failed', ex)
+          });
+
+
+
+
+
+        // EachFeature bindPopup "name"
+        function onEachFeature(feature, layer) {
+            if (feature.properties && feature.properties.title) {
+                layer.bindPopup(feature.properties.title);
+            }
+        }
+
+
+        /* ========== Ajax Version ========== */
+        // $.ajax({
+        //     url: './cmn/json/maker-388.json',
+        //     dataType: 'json',
+        //     data: {name: 'addressPoints'},
+        //     success: function(data){
+
+        //         $.each(data.addressPoints, function(i){
+
+        //             var d = data.addressPoints[i];
+
+        //             var marker = L.marker(new L.LatLng(d.lat, d.lng), { title: d.id, test: d.text  });
+        //             marker.bindPopup("<strong>" + d.title + "</strong>" + "<br>" + d.text + "<br>" + "ID = " + d.id);
+        //             markers.addLayer(marker);
+
+        //         });
+        //     }
+        // });
+
+        // /* ========== JavaScript配列 Version ========== */
+        // for (var i = 0; i < addressPoints.length; i++) {
+        //     var a = addressPoints[i];
+        //     var title  = a[2];
+        //     var text   = a[3];
+        //     var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+        //     marker.bindPopup("<strong>" + title + "</strong>" + "<br>" + text);
+        //     markers.addLayer(marker);
+        // }
+
+
+
+
+        // /* ========== マーカーリスト生成01 ========== */
+
+        //            //inizialize Leaflet List Markers
+        //       var list = new L.Control.ListMarkers({
+        //           layer: markers,
+        //           label: 'title',
+        //           maxZoom: 19,
+        //           maxItems: 20,
+        //           itemIcon: null
+        //       });
+
+        //       list.on('item-mouseover', function(e) {
+        //           e.layer.setIcon(L.icon({
+        //               iconUrl: '/cmn/img/select-marker.png'
+        //           }))
+        //       }).on('item-mouseout', function(e) {
+        //           e.layer.setIcon(L.icon({
+        //               iconUrl: L.Icon.Default.imagePath + '/marker-icon.png'
+        //           }))
+        //       });
+
+        //       map.addControl( list );
+
+        // /* ========== マーカーリスト生成01 END ========== */
+
+
+
+        /* ========== マーカーリスト生成02 ========== */
+
+        // マーカーリスト生成関数
+        function makeMakerList() {
+
+            // 空のリストを作成
+            var inBounds = [],
+
+            // 地図の境界を取得 左上と右下
+                bounds = map.getBounds();
+
+            // 地図の境界と比較し、現在表示されているかどうかを取得
+            markers.eachLayer(function(marker) {
+
+                if (bounds.contains(marker.getLatLng())) {
+                    var lat = marker.getLatLng().lat;
+                    var lng = marker.getLatLng().lng;
+                    var latlng = [lat, lng];
+                    inBounds.push("<li><a clss='makerList-link' data-zoom='19' data-position='" + latlng + "'>" + marker.options.title + "<br>" + marker.options.test + "</a></li>");
+
+          // document.getElementById('makerList').onclick = function() {
+          //    map.setView(latlng, 18);
+          //    markers.openPopup();
+          // };
+                }
+
+            });
+            // マーカーリストを表示
+            document.getElementById('makerList').innerHTML = inBounds.join('\n');
+        }
+
+        // マップが移動が完了したらマーカーリスト生成関数を実行
+        map.on('moveend', makeMakerList);
+
+        // 初回ロード時にマーカーリスト生成関数を実行
+        window.onload = function() {
+          makeMakerList();
+        }
+
+    // 場所移動
+    $(function() {
+        $("#makerList").on('click', function(target) {
+            locatMove(target);
+        });
+    });
+
+/* ========== マーカーリスト生成02 END ========== */
+
+
+            // add layers
+            var baseLayers = {
+                "Mapbox": mapbox,
+                "OpenStreetMap": osm,
+                "Google Map Satellite": ggl,
+                "Google Map Roadmap": ggl2,
+                "Google Map Terrain": ggl3,
+                "Google Map Hybrid": ggl4,
+                "地理院地図 標準": cjstd,
+                "地理院地図 オルソ画像": cjort,
+                "地理院地図 白地図": cjblk,
+                "Bing": bing,
+                "WaterColor": watercolor,
+                "Toner": toner
+            };
+
+            // SingleOverlays
+            var overlays = {
+                "Marker1": markers,
+                "Marker2": markers2,
+            };
+
+            // GroupedOverlays
+            // var groupedOverlays = {
+            //   "Marker Group 1": {
+            //     "事故情報1": markers,
+            //     "事故情報2": markers2
+            //   },
+            //   "Marker Group 2": {
+            //     "雲の予測": cf,
+            //     "降水予測": pf,
+            //     "気圧図": pcf
+            //   }
+            // };
+
+            if(_getDevice == "mobile"){
+                var _collapsedSwitch = true
+            } else {
+                var _collapsedSwitch = false
+            }
+
+            // GroupedOverlays
+            // L.control.groupedLayers(baseLayers, groupedOverlays, {
+            //                 collapsed : _collapsedSwitch,
+            //                 position : 'topright'
+            //             } ).addTo(map);
+
+            // SingleOverlays
+            // L.control.layers(baseLayers, overlays, {
+            //     collapsed : _collapsedSwitch,
+            //     position : 'topright'
+            // } ).addTo(map);
+
+            // スケールを表示
+            // L.control.scale({
+            //     imperial : false,
+            //     position : 'bottomright'
+            // }).addTo(map);
+
+            // ズームスライダーを表示
+            // L.control.zoomslider({
+            //     position : 'topleft',
+            // }).addTo(map);
+
+
+            // /* ========== 住所から座標を検索 ========== */
+            var osmGeocoder = new L.Control.OSMGeocoder({
+                collapsed: false,
+                position: 'topright',
+                text: '検索',
+            });
+            map.addControl(osmGeocoder);
+
+
+            /* ========== 現在地を測定し移動 ========== */
+            var lc = L.control.locate({
+                follow: true,
+                position: 'topright',
+                strings: {
+                    title: "現在地を表示します",
+                    metersUnit: "m",
+                    popup: "あなたはこの地点から{distance}{unit}以内にいます",
+                    outsideMapBoundsMsg: "現在地を測定できませんでした"
+                }
+            }).addTo(map);
+
+            map.on('startfollowing', function() {
+                map.on('dragstart', lc._stopFollowing, lc);
+            }).on('stopfollowing', function() {
+                map.off('dragstart', lc._stopFollowing, lc);
+            });
+            /* ========== 現在地を測定し移動 END ========== */
+
+
+
+// 場所移動関数
+function locatMove(elm) {
+    // Usage <a href="#" data-zoom="19" data-position="35.82109227,139.2209316">TEXT</a>
+    var pos  = elm.target.getAttribute('data-position');
+    var zoom = elm.target.getAttribute('data-zoom');
+    if (pos && zoom) {
+        var locat = pos.split(',');
+        var zoo   = parseInt(zoom);
+        map.setView(locat, zoo, {animation: true});
+        return false;
+    }
+}
+
+
+// 指定された秒数だけ待つ deferred
+function wait(sec) {
+  var d = $.Deferred();
+  setTimeout(function() {
+    d.resolve();
+  }, sec * 1000);
+  return d.promise();
+}
+
+
+// レイヤー切り替えラジオボタン
+$(function() {
+    $( ".layerSwitchRadio" ).on('click', function(event) {
+
+        // マップ上の既存のレイヤをループして全て削除
+        map.eachLayer(function (layer) {
+            map.removeLayer(layer);
+        });
+
+        layerClicked = window[event.target.value];
+        map.addLayer(layerClicked);
+
+        // マーカーも消えてしまうのでレイヤに追加
+        map.addLayer(markers);
+        map.addLayer(markers2);
+
+    });
+});
+
+
+// オーバーレイ切り替えチェックボックス
+$(function() {
+   $( ".layerSwitchCheckbox" ).on('click', function(event) {
+        layerClicked = window[event.target.value];
+            if (map.hasLayer(layerClicked)) {
+                map.removeLayer(layerClicked);
+            }
+            else{
+                map.addLayer(layerClicked);
+            };
+    });
+});
+
+
+        </script>
+    </body>
+</html>

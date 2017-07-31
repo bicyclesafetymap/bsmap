@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Listing markers in clusters</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
+
+<style>
+pre.ui-coordinates {
+  background:rgba(0,0,0,0.5);
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  padding:5px 10px;
+  color:#fff;
+  font-size:11px;
+  line-height:18px;
+  border-radius:3px;
+  max-height:240px;
+  overflow:auto;
+  width:100px;
+  }
+</style>
+
+<div id='map'></div>
+<pre id='coordinates' class='ui-coordinates'></pre>
+
+<script src="realworld.388.js"></script>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1Ijoic2h1dWhleWhleSIsImEiOiJjaWdocWQ4ODA4NWIxdjZtMjloc2gyMjBqIn0.03xmneq730QOe4PC0jrU0A';
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([-37.82, 175.215], 14);;
+
+var markers = new L.MarkerClusterGroup();
+
+for (var i = 0; i < addressPoints.length; i++) {
+    var a = addressPoints[i];
+    var title = a[2];
+    var marker = L.marker(new L.LatLng(a[0], a[1]), {
+        icon: L.mapbox.marker.icon({'marker-symbol': 'post', 'marker-color': '0044FF'}),
+        title: title
+    });
+    marker.bindPopup(title);
+    markers.addLayer(marker);
+}
+
+map.addLayer(markers);
+
+function onmove() {
+    // Get the map bounds - the top-left and bottom-right locations.
+    var inBounds = [],
+        bounds = map.getBounds();
+    markers.eachLayer(function(marker) {
+        // For each marker, consider whether it is currently visible by comparing
+        // with the current map bounds.
+        if (bounds.contains(marker.getLatLng())) {
+            inBounds.push(marker.options.title);
+        }
+    });
+    // Display a list of markers.
+    document.getElementById('coordinates').innerHTML = inBounds.join('\n');
+}
+
+map.on('move', onmove);
+
+// call onmove off the bat so that the list is populated.
+// otherwise, there will be no markers listed until the map is moved.
+onmove();
+</script>
+</body>
+</html>

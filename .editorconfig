@@ -1,0 +1,16 @@
+# ルートフォルダかどうか
+root = true
+
+[*]
+indent_style = space
+charset = utf-8
+end_of_line = lf
+
+# [*.php]
+# indent_size = 4
+
+[*.{html,css,coffee,js}]
+indent_size = 2
+
+[*.scss]
+indent_size = 2

@@ -1,0 +1,83 @@
+//
+//  File Name   : _mixin.css
+//  Description : Mixin
+//
+
+@mixin clearfix {
+  &:after {
+    content:"";
+    display:table;
+    clear:both;
+  }
+}
+
+// Hover
+@mixin hover{
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+  cursor: pointer;
+  @include sp{
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+
+// Img Hover Fade
+@mixin fade-hover{
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+  @include opacity(1);
+  &:hover{
+    text-decoration: none;
+    @include opacity(0.7);
+  }
+}
+
+// Opacity
+@mixin opacity($prop){
+  opacity: $prop;
+  $val: $prop * 100;
+  filter: alpha(opacity=$val);
+  @include sp{
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+
+// Gradation
+@mixin grad($start, $end){
+  background: $start;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1.00, $end), color-stop(0.00, $start));
+  background: -webkit-linear-gradient($start, $end);
+  background: -moz-linear-gradient($start, $end);
+  background: -o-linear-gradient($start, $end);
+  background: -ms-linear-gradient($start, $end);
+  background: linear-gradient($start, $end);
+}
+
+
+// Line
+@mixin line-bottom {
+  border-bottom: 1px solid #000;
+  box-shadow: 0px 1px 0px 0px rgba(255,255,255,0.1);
+}
+
+
+@mixin pc {
+  //PC
+  @media (min-device-width: $pc-min) {
+    @content;
+  }
+}
+@mixin tab {
+  //Tablet
+  @media (min-device-width: $tablet-min) and (max-device-width: ($tablet-max - 1)) {
+    @content;
+  }
+}
+@mixin sp {
+  //SP
+  @media (min-device-width: $sp-min) and (max-device-width: ($sp-max - 1)) {
+    @content;
+  }
+}

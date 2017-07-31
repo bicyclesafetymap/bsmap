@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Leaflet Clip example</title>
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"/>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+<link rel="stylesheet" href="./cmn/css/Control.OSMGeocoder.css" />
+<script src="/cmn/js/leaflet-src.js"></script>
+<script src="leaflet-hash.js"></script>
+<script src="./cmn/js/Control.OSMGeocoder.js"></script>
+<style>
+body {padding: 0; margin: 0}
+html, body, #mapdiv {height: 100%; width: 100%;}
+.leaflet-container {background: #fff; bottom: 20px}
+.rangeX {position: absolute; width: 100%; bottom: 0px; z-index: 9999}
+.rangeY {position: absolute; width: 100%; top: -2px; z-index: 9999}
+input[type='range']{-webkit-appearance: none;
+  -moz-appearance:none; background-color: #a59aca;}
+</style>
+</head>
+<body>
+<input id='range' class='rangeY' type='range' min='0', max='1.0' step='any'/>
+<input id='range' class='rangeX' type='range' min='0', max='1.0' step='any'/>
+<div id='mapdiv'>
+<script>
+var ort = L.tileLayer(
+  'http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg', {
+    attribution: "GSI Ortho", maxNativeZoom: 17, maxZoom: 20
+});
+
+var ort1940 = L.tileLayer(
+  'http://cyberjapandata.gsi.go.jp/xyz/ort_USA10/{z}/{x}/{y}.png', {
+    attribution: "GSI Ortho 1940s", maxNativeZoom: 17, maxZoom: 20
+});
+
+var std = L.tileLayer(
+    'http://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+    {
+        attribution: "GSI Std", maxNativeZoom: 17, maxZoom: 20
+    }
+);
+
+var map = L.map('mapdiv', {
+    center: [34.3959,132.4520],
+    zoom: 16,
+    layers: [ort, std , ort1940],
+    zoomControl: false
+});
+
+new L.Control.Zoom({ position: 'bottomright' }).addTo(map);
+var hash = L.hash(map);
+
+var rangeX = document.querySelector('.rangeX');
+var rangeY = document.querySelector('.rangeY');
+
+function clip() {
+    var nw = map.containerPointToLayerPoint([0, 0]);    //レイヤーコンテナ左上座標(North West)
+    var se = map.containerPointToLayerPoint(map.getSize()); //レイヤーコンテナ右下座標(South East)
+
+    var clipX = nw.x + (se.x - nw.x) * rangeX.value;    //x軸右座標( * 0.5 でx軸中心座標)
+    var clipY = nw.y + (se.y - nw.y) * rangeY.value;    //y軸下座標
+
+    //css clipをレイヤーコンテナに適用する rect（上,右,下,左）
+    std.getContainer().style.clip = 'rect(' + [nw.y, clipX, clipY, nw.x].join('px,') + 'px)';
+    ort1940.getContainer().style.clip = 'rect(' + [clipY, clipX, se.y, nw.x].join('px,') + 'px)';
+}
+
+
+//三項演算子を使ってoninputが存在するか調べてイベントリスナーを設定してる
+rangeX['oninput' in rangeX ? 'oninput' : 'onchange'] = clip;
+rangeY['oninput' in rangeY ? 'oninput' : 'onchange'] = clip;
+
+map.on('move', clip);
+
+clip();
+            // /* ========== 住所から座標を検索 ========== */
+            var osmGeocoder = new L.Control.OSMGeocoder({
+                collapsed: false,
+                position: 'bottomright',
+                text: '検索',
+            });
+            map.addControl(osmGeocoder);
+</script>
+</body>
+</html>

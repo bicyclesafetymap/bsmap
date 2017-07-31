@@ -1,0 +1,46 @@
+{
+  "name": "Bauhaus-set",
+  "version": "1.0.3",
+  "description": "coding-set",
+  "main": "gulpfile.js",
+  "scripts": {
+    "first": "npm i && npm start",
+    "start": "gulp",
+    "dev": "gulp dev",
+    "live": "gulp live",
+    "build": "gulp build",
+    "check": "ncu",
+    "db": "gulp db-dump",
+    "update": "ncu -a"
+  },
+  "keywords": [
+    "gulp"
+  ],
+  "contributors": [
+    "uehaso (https://github.com/uehaso)",
+    "shuuheyhey (https://github.com/shuuheyhey)",
+    "moobay9 (https://github.com/moobay9)"
+  ],
+  "repository": "npm/npm",
+  "license": "Apache-2.0",
+  "bugs": {
+    "email": "support@bauhaus-web.jp"
+  },
+  "dependencies": {
+    "browser-sync": "^2.10.0",
+    "del": "^2.1.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-cached": "^1.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-run": "^1.6.12",
+    "gulp-sass": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-using": "0.0.1",
+    "gulp-util": "^3.0.7",
+    "npm-check-updates": "^2.5.2"
+  }
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang='ja'>
+    <head>
+        <meta charset='utf-8' />
+        <title>みんなでつくる自転車セイフティマップ Demo 50000pin</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- css -->
+        <link rel="stylesheet" href="./cmn/css/base.css" />
+        <link rel="stylesheet" href="./cmn/css/leaflet.css" />
+        <link rel="stylesheet" href="./cmn/css/MarkerCluster.css" />
+        <link rel="stylesheet" href="./cmn/css/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="./cmn/css/screen.css">
+        <link rel="stylesheet" href="./cmn/css/Control.OSMGeocoder.css" />
+        <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="./cmn/css/L.Control.Locate.css" />
+        <!-- jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <!-- JavaScript -->
+        <script src="./cmn/js/leaflet-src.js"></script>
+        <script src="http://maps.google.com/maps/api/js?v=3&language=ja"></script>
+        <script src="./cmn/js/gmap.js"></script>
+        <script src="./cmn/js/Bing.js"></script>
+        <script src="./cmn/js/leaflet.markercluster.js"></script>
+        <script src="./cmn/js/Control.OSMGeocoder.js"></script>
+        <script src="./cmn/js/L.Control.Locate.js"></script>
+        <script src="./cmn/js/base.js"></script>
+        <!-- Data -->
+        <script src="./cmn/js/marker-50000-1.js"></script>
+        <script src="./cmn/js/marker-50000-2.js"></script>
+
+<style type="text/css">
+  * {
+    margin: 0;
+    padding: 0;
+}
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+</style>
+
+        <script>
+
+        function init() {
+
+            var map = L.map('map', {
+                center: [35.78, 139.28],
+                zoom: 9,
+                zoomControl: true
+            });
+
+            // OSM地図レイヤ
+            var mainLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom : 19,
+                minZoom: 3
+            });
+
+            // 地理院地図の標準地図レイヤ
+            var cjstd = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 18,
+                minZoom: 3
+            });
+
+            // 地理院地図のオルソ画像レイヤ
+            var cjort = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 18,
+                minZoom : 6
+            });
+
+            // 地理院地図の白地図レイヤ
+            var cjblk = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://portal.cyberjapan.jp/help/termsofuse.html" target="_blank">国土地理院</a>',
+                maxZoom : 14,
+                minZoom: 6
+            });
+
+            // Bing地図レイヤ
+            // for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
+            var imagerySet = "Road"; // Aerial | AerialWithLabels | Road
+            var bing = new L.BingLayer("ApZiEmbLrlk87uvEpqaF33l3gh4O54vvA8WfVUa7kgUvplMh_aFKJGWFoPKCRoIQ", {
+                type: imagerySet,
+                maxZoom : 19,
+                minZoom: 3
+            });
+
+            // Stamen.Watercolor
+            var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+                attribution : '&copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a> Contributors & <a target="_blank" href="http://stamen.com">Stamen Design</a>',
+                maxZoom : 16,
+                minZoom: 3
+            });
+
+            // Stamen.Toner
+            var toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+                attribution : '&copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a> Contributors & <a target="_blank" href="http://stamen.com">Stamen Design</a>',
+                maxZoom : 20,
+                minZoom: 3
+            });
+
+            // Google Map Satellite
+            var ggl  = new L.Google('SATELLITE', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+            // Google Map Roadmap
+            var ggl2 = new L.Google('ROADMAP', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+            // Google Map Terrain
+            var ggl3 = new L.Google('TERRAIN', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+            // Google Map Hybrid
+            var ggl4 = new L.Google('HYBRID', {
+                maxZoom : 21,
+                minZoom: 3
+            });
+
+            map.addLayer(mainLayer);
+
+
+        var progress = document.getElementById('progress');
+        var progressBar = document.getElementById('progress-bar');
+
+        function updateProgressBar(processed, total, elapsed, layersArray) {
+            if (elapsed > 1000) {
+                progress.style.display = 'block';
+                progressBar.style.width = Math.round(processed/total*100) + '%';
+            }
+
+            if (processed === total) {
+                progress.style.display = 'none';
+            }
+        }
+
+        var markers = L.markerClusterGroup({ chunkedLoading: true, chunkProgress: updateProgressBar });
+
+        var markerList = [];
+
+        for (var i = 0; i < addressPoints.length; i++) {
+            var a = addressPoints[i];
+            var title  = a[2];
+            var text   = a[3];
+            var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+            marker.bindPopup("<strong>" + title + "</strong>" + "<br>" + text);
+            markerList.push(marker);
+        }
+
+        for (var i = 0; i < addressPoints2.length; i++) {
+            var a = addressPoints[i];
+            var title  = a[2];
+            var text   = a[3];
+            var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+            marker.bindPopup("<strong>" + title + "</strong>" + "<br>" + text);
+            markerList.push(marker);
+        }
+
+        markers.addLayers(markerList);
+        map.addLayer(markers);
+
+            // add layers
+            var baseLayers = {
+                "OpenStreetMap": mainLayer,
+                "Google Map Satellite": ggl,
+                "Google Map Roadmap": ggl2,
+                "Google Map Terrain": ggl3,
+                "Google Map Hybrid": ggl4,
+                "地理院地図 標準": cjstd,
+                "地理院地図 オルソ画像": cjort,
+                "地理院地図 白地図": cjblk,
+                "Bing": bing
+            };
+
+            var overlays = {
+                "Marker": markers
+            };
+
+            if(_getDevice == "mobile"){
+                var _collapsedSwitch = true
+            } else {
+                var _collapsedSwitch = false
+            }
+
+            L.control.layers(baseLayers, overlays, {
+                collapsed : _collapsedSwitch,
+                position : 'topright'
+            } ).addTo(map);
+
+            // スケールを表示
+            // L.control.scale({
+            //     imperial : false,
+            //     position : 'bottomright'
+            // }).addTo(map);
+
+
+            // /* ========== 住所から座標を検索 ========== */
+            // var osmGeocoder = new L.Control.OSMGeocoder({
+            //     collapsed: false,
+            //     position: 'topright',
+            //     text: '検索',
+            // });
+            // map.addControl(osmGeocoder);
+
+
+            /* ========== 現在地を測定し移動 ========== */
+            var lc = L.control.locate({
+                follow: true,
+                position: 'topright',
+                strings: {
+                    title: "現在地を表示します",
+                    metersUnit: "m",
+                    popup: "あなたはこの地点から{distance}{unit}以内にいます",
+                    outsideMapBoundsMsg: "現在地を測定できませんでした"
+                }
+            }).addTo(map);
+
+            map.on('startfollowing', function() {
+                map.on('dragstart', lc._stopFollowing, lc);
+            }).on('stopfollowing', function() {
+                map.off('dragstart', lc._stopFollowing, lc);
+            });
+
+        }
+        </script>
+
+    </head>
+    <body onload='init();'>
+    <div id="progress"><div id="progress-bar"></div></div>
+        <div id='map'></div>
+    </body>
+</html>

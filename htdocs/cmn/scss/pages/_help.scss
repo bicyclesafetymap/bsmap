@@ -1,0 +1,120 @@
+
+
+.iconInfoContainer{
+  color: #929292;
+  padding-bottom: 70px;
+  min-height: 800px;
+  @include sp{
+    min-height: 450px;
+  }
+  &_item{
+    padding: 35px 0 0 15px;
+    margin-bottom: 10px;
+    // border-top: 1px solid $default-boder-color;
+  }
+  &_headtext{
+    padding: 15px 0 0 15px;
+    @include sp{
+      font-size: 1.3rem;
+    }
+  }
+  &_inner{
+    display: table;
+    width: 100%;
+    margin-bottom: 14px;
+    position: relative;
+    &:after{
+      display: none;
+
+      content: "";
+      width: 14px;
+      height: 14px;
+      border: solid #929292;
+      border-width: 0 0 1px 1px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 5px;
+      margin: auto;
+      transform: rotate(-45deg);
+      transition: all .2s ease-in-out;
+    }
+    &.active{
+      &:after{
+        transform: rotate(135deg);
+      }
+    }
+  }
+  &_icon,
+  &_title{
+    display: table-cell;
+    vertical-align: middle;
+  }
+  &_icon{
+    width: 35px;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
+  &_title{
+    padding: 0 30px 0 10px;
+    font-size: 1.6rem;
+  }
+  &_exp{
+    display: none;
+    font-size: 1.6rem;
+    padding-bottom: 10px;
+    line-height: 1.6;
+  }
+}
+
+.helpContainer{
+  padding: 10px;
+  &_item{
+    border: 1px solid $default-boder-color;
+    margin-bottom: 25px;
+  }
+  &_title{
+    padding: 0 5px 5px;
+    margin-bottom: 10px;
+    font-size: 140%;
+    @include sp{
+      font-size: 2.2rem;
+    }
+  }
+  &_list{
+    dt{
+      background: #fff;
+      border: solid $default-boder-color;
+      border-width: 1px 0;
+      font-size: 120%;
+      font-weight: bold;
+      padding: 10px;
+      @include sp{
+        font-size: 1.6rem;
+      }
+      &:first-child{
+        border-top: none;
+      }
+    }
+    dd{
+      padding: 10px 10px 10px;
+      background: #fff;
+      word-break: break-all;
+      font-size: 110%;
+      @include sp{
+        font-size: 1.5rem;
+      }
+      &:last-child{
+        // padding-bottom: 0;
+      }
+    }
+    a{
+      text-decoration: underline;
+      &:hover{
+        text-decoration: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,149 @@
+//
+//  File Name   : _default.scss
+//  Description : Default
+//
+
+
+// Body setting
+//-----------------------------------------------------------
+
+html{
+  background: $default-bg-color;
+}
+
+body {
+  font-size: 62.5%;
+  color: $default-font-color;
+  font-family: $font-family-gothic-base;
+  background: $default-bg-color;
+}
+
+//SP Use
+@include sp {
+  html{
+    font-size: 62.5%;
+  }
+  body {
+    min-width: initial;
+    font-size: 1.3rem;
+    width: 100%;
+    min-width: 320px;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+.bodyNoScloll{
+  overflow: hidden;
+  height: 100%;
+  body{
+    overflow: hidden;
+    height: 100%;
+  }
+}
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+button,
+input,
+select,
+textarea {
+  color: $default-font-color;
+  outline: none;
+}
+
+button{
+  cursor: pointer;
+}
+
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+
+/*
+ * Remove the gap between images, videos, audio and canvas and the bottom of
+ * their containers: h5bp.com/i/440
+ */
+
+audio,
+canvas,
+img,
+video {
+  vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+  resize: vertical;
+}
+
+
+// Link setting
+//-----------------------------------------------------------
+a:link,
+a:visited,
+a:active {
+  color: $link-color;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  @include sp{
+    text-decoration: none;
+  }
+}
+
+// Typo setting
+//-----------------------------------------------------------
+
+p {
+  margin:0 0 1em;
+}
+
+label,
+input[type=submit]{
+  cursor: pointer;
+}
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+// Hover
+a:hover img.over{
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  -ms-filter: "alpha(opacity=80)";
+  cursor: pointer;
+}
