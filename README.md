@@ -37,10 +37,10 @@
   [http://fuelphp.jp/docs/1.8/general/environments.html](http://fuelphp.jp/docs/1.8/general/environments.html)  
 
   - Apache 
-      SetEnv FUEL_ENV production
+     - SetEnv FUEL_ENV production
         
   - Nginx
-      fastcgi_param FUEL_ENV production
+     - fastcgi_param FUEL_ENV production
 
 3.
   fuel/app/config 以下に適切なデータベースの接続設定を行ってください。  
