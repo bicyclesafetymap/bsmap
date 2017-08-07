@@ -15,6 +15,8 @@
    - MySQL 5.1 以上
    - コンソールで PHP CLI が実行できる環境
       * データベースの構築などで、FuelPHP の oil コマンドが実行できる必要があります。
+   - [composer](https://getcomposer.org/) が実行できる環境
+      * [composer の動作環境要件](https://getcomposer.org/doc/00-intro.md#system-requirements)
 
 
 ## 使用している主要ソフトウェア
